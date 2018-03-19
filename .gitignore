@@ -5,9 +5,6 @@
 *.DS_Store
 .vscode/
 
-#django static dir (collected)
-sideline/static/
-
 #local settings file
 local_settings.py
 
@@ -233,4 +230,3 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
-sideline/app/admin.py

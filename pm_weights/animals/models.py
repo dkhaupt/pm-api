@@ -3,11 +3,21 @@ from django.db import models
 # Create your models here.
 
 class Animal(models.Model):
+    '''
+    The Animal represents a single Animal in the herd
+    Initially, the only field is the external ID
+    '''
     # bookkeeping fields
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+    # fields of importance
+    external_id = models.IntegerField()
     
 class AnimalWeight(models.Model):
+    '''
+    The AnimalWeight model represents a weight record (weight + datetime of weighing) for a single animal
+    Each Animal may have many associated AnimalWeight records
+    '''
     # bookkeeping fields
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
