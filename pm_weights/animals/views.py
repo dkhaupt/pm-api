@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils.dateparse import parse_datetime
+from datetime import datetime
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
@@ -27,37 +28,32 @@ class AnimalViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def estimated_weight(self, request, slug=None):
+    def estimated_weight(self, request, date=None):
         '''
         Function to estimate the total animal weight at a given time
         This finds all animals with weight records and interpolates their weight at the given time
         Returns:
          num_animals: total animals included in estimate
-         estimated_weight: total weight of num_animals at the provided time
+         estimated_weight: total estimated weight of num_animals at the provided time
         '''
-        if slug is None:
-            # no date passed
-            pass
         response = {}
         weight = 0
-        # parse passed-in slug
-        time = parse_datetime('2018-03-02T12:00:00Z')
+        # pull the date query param, if not present default to current time
+        try:
+            time = parse_datetime(request.GET['date'])
+        except:
+            time = datetime.now()
         # get all animals with at least a single weight record
         animals = Animal.objects.filter(animalweight__isnull=False).distinct()
         response['num_animals'] = animals.count()
         for animal in animals:
-            # initialize 2 numbers to hold the weights for interpolation
-            w1 = 0
-            w2 = 0
             # get all weight records for the animal & order 
             weights = animal.animalweight_set.order_by('-weigh_date')
-            # if only 1 weight, that's the estimate. add and continue to next
+            # if only 1 weight record, that's the estimate. add and continue to next
             if weights.count() == 1:
                 weight += weights[0].weight
                 continue
-
-            # if more than 1 weight, find the correct 2 for interpolation
-            # separate into before/after
+            # if more than 1 weight, calc the line equation with the 2 closest records
             before = weights.filter(weigh_date__lte=time)
             after = weights.filter(weigh_date__gt=time).reverse()
             if before.count() > 0 and after.count() > 0:
@@ -66,22 +62,19 @@ class AnimalViewSet(viewsets.ModelViewSet):
             elif before.count() == 0 and after.count() > 0:
                 w1 = after[0]
                 w2 = after[1]
-            elif before.count() > 0 and after.count() > 0:
+            elif before.count() > 0 and after.count() == 0:
                 w1 = before[0]
                 w2 = before[1]
             else:
                 # this should never happen but account for it anyway
+                # potential place to raise an exception
                 pass
 
-            # interpolate the weights
-            # find delta per second
-            delta = w2.weight - w1.weight
-            seconds = (w2.weigh_date - w1.weigh_date).total_seconds()
-            dps = delta/seconds
-            # find time difference from recorded weights to requested time
-
-            # i realized too late that i spent way too long here and that there are libraries which provide this kind of interpolation
-            weight = 1100
+            # calculate slope & x-intercept
+            m = (w2.weight - w1.weight)/(w2.weigh_date - w1.weigh_date).total_seconds()
+            b = w1.weight - m * w1.weigh_date.timestamp()
+            # plug in given time and add to total
+            weight += m * time.timestamp() + b
 
         # set the final weight in the response
         response['estimated_weight'] = weight

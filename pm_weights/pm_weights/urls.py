@@ -21,23 +21,19 @@ from animals.views import AnimalViewSet
 
 from rest_framework import routers
 
+# register default animal views with router
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'animal', AnimalViewSet)
 
-# animal_retrieve = AnimalViewSet.as_view({'get': 'retrieve'})
-# animal = AnimalViewSet.as_view({'get': 'animal',
-#                                         'post': 'animal'})
-
+# bind the non-default views 
 animal_weight = AnimalViewSet.as_view({'post': 'add_weight'})
-
 estimated_weight = AnimalViewSet.as_view({'get': 'estimated_weight'})
 
 urlpatterns = [
-    url(r'^api/', include(router.urls)),
-    url(r'^admin/', admin.site.urls),
-    # animal urls
+     # animal urls
     url(r'animal/(?P<id>[0-9]+)/weight$', animal_weight),
-    url(r'animal/estimated_weight/(?P<slug>[-:\w+])', estimated_weight),
-    # url(r'animal/(?P<id>[0-9]+)$', animal_retrieve),
-    # url(r'animal', animal),
+    url(r'animal/estimated_weight', estimated_weight),
+    # base router & admin urls
+    url(r'^', include(router.urls)),
+    url(r'^admin/', admin.site.urls),
 ]
