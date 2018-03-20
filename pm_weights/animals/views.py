@@ -77,6 +77,6 @@ class AnimalViewSet(viewsets.ModelViewSet):
             weight += m * time.timestamp() + b
 
         # set the final weight in the response
-        response['estimated_weight'] = weight
+        response['estimated_total_weight'] = weight
         return Response(response, status=status.HTTP_200_OK)
 
