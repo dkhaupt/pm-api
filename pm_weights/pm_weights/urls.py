@@ -30,11 +30,14 @@ router.register(r'animal', AnimalViewSet)
 
 animal_weight = AnimalViewSet.as_view({'post': 'add_weight'})
 
+estimated_weight = AnimalViewSet.as_view({'get': 'estimated_weight'})
+
 urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
     # animal urls
     url(r'animal/(?P<id>[0-9]+)/weight$', animal_weight),
+    url(r'animal/estimated_weight/(?P<slug>[-:\w+])', estimated_weight),
     # url(r'animal/(?P<id>[0-9]+)$', animal_retrieve),
     # url(r'animal', animal),
 ]
