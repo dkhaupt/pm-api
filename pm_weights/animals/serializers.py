@@ -17,12 +17,11 @@ class AnimalWeightSerializer(serializers.ModelSerializer):
 
 class AnimalSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
-    external_id = serializers.IntegerField(required=False)
     weights = AnimalWeightSerializer(source='animalweight_set', many=True, required=False)
 
     class Meta:
         model = Animal
-        fields = ('id', 'external_id', 'weights')
+        fields = ('id', 'weights')
 
     def get_id(self, args, **kwargs):
         return args.external_id

@@ -16,7 +16,8 @@ class AnimalViewSet(viewsets.ModelViewSet):
     serializer_class = AnimalSerializer
 
     def add_weight(self, request, id=None):
-        animal = Animal.objects.get(pk=id)
+        queryset = Animal.objects.all()
+        animal = get_object_or_404(queryset, pk=id)
         serializer = AnimalWeightSerializer(data=request.data, context={'request': request, 'animal': animal})
         if serializer.is_valid():
             instance = serializer.save()
