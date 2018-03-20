@@ -13,9 +13,28 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 
+# views
+from animals.views import AnimalViewSet
+
+from rest_framework import routers
+
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'animal', AnimalViewSet)
+
+# animal_retrieve = AnimalViewSet.as_view({'get': 'retrieve'})
+# animal = AnimalViewSet.as_view({'get': 'animal',
+#                                         'post': 'animal'})
+
+animal_weight = AnimalViewSet.as_view({'post': 'add_weight'})
+
 urlpatterns = [
+    url(r'^api/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
+    # animal urls
+    url(r'animal/(?P<id>[0-9]+)/weight$', animal_weight),
+    # url(r'animal/(?P<id>[0-9]+)$', animal_retrieve),
+    # url(r'animal', animal),
 ]

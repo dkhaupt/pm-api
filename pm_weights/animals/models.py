@@ -12,6 +12,9 @@ class Animal(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     # fields of importance
     external_id = models.IntegerField()
+
+    def __str__(self):
+        return 'Animal {0}'.format(self.external_id)
     
 class AnimalWeight(models.Model):
     '''
