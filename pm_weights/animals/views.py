@@ -17,6 +17,7 @@ class AnimalViewSet(viewsets.ModelViewSet):
     serializer_class = AnimalSerializer
 
     def add_weight(self, request, id=None):
+        # add a weight record for a single animal
         queryset = Animal.objects.all()
         animal = get_object_or_404(queryset, pk=id)
         serializer = AnimalWeightSerializer(data=request.data, context={'request': request, 'animal': animal})
@@ -79,9 +80,10 @@ class AnimalViewSet(viewsets.ModelViewSet):
             dps = delta/seconds
             # find time difference from recorded weights to requested time
 
+            # i realized too late that i spent way too long here and that there are libraries which provide this kind of interpolation
             weight = 1100
 
-        # set the final weight
+        # set the final weight in the response
         response['estimated_weight'] = weight
         return Response(response, status=status.HTTP_200_OK)
 
