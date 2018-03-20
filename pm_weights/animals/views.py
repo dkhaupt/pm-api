@@ -70,7 +70,7 @@ class AnimalViewSet(viewsets.ModelViewSet):
                 # potential place to raise an exception
                 pass
 
-            # calculate slope & x-intercept
+            # calculate slope & y-intercept
             m = (w2.weight - w1.weight)/(w2.weigh_date - w1.weigh_date).total_seconds()
             b = w1.weight - m * w1.weigh_date.timestamp()
             # plug in given time and add to total
