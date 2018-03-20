@@ -9,10 +9,10 @@ class AnimalWeightSerializer(serializers.ModelSerializer):
         fields = ('id', 'weight', 'weigh_date')
 
     def create(self, validated_data):
-        animal_id = self.context['animal_id']
+        animal = self.context['animal']
         weight = validated_data.pop('weight')
         weigh_date = validated_data.pop('weigh_date')
-        weight_record = AnimalWeight.objects.create(weight, weigh_date)
+        weight_record = AnimalWeight.objects.create(animal=animal, weight=weight, weigh_date=weigh_date)
         return weight_record
 
 class AnimalSerializer(serializers.ModelSerializer):

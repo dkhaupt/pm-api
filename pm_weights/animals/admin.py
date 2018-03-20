@@ -12,4 +12,7 @@ class AnimalAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Animal, AnimalAdmin)
+
+
+
 admin.site.register(AnimalWeight)

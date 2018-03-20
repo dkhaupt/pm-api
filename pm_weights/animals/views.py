@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .models import Animal, AnimalWeight
 
 # serializer
-from .serializers import AnimalSerializer
+from .serializers import AnimalSerializer, AnimalWeightSerializer
 
 # Create your views here.
 
@@ -15,9 +15,9 @@ class AnimalViewSet(viewsets.ModelViewSet):
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
 
-    def add_weight(self, request, pk=None):
-        animal = Animal.objects.get(pk=pk)
-        serializer = AnimalWeightSerializer(data=request.data, context={'request': request, 'animal_id': animal.id})
+    def add_weight(self, request, id=None):
+        animal = Animal.objects.get(pk=id)
+        serializer = AnimalWeightSerializer(data=request.data, context={'request': request, 'animal': animal})
         if serializer.is_valid():
             instance = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
